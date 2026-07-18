@@ -1,80 +1,130 @@
-# lsfg-vk for AYN Odin 2 Portal (Armada OS, aarch64)
+# lsfg-vk for AYN Odin 2 / Odin 2 Portal on Armada OS
 
-Native aarch64 build of [lsfg-vk](https://github.com/PancakeTAS/lsfg-vk) — Lossless Scaling
-frame generation as a Vulkan layer — compiled for the AYN Odin 2 Portal running Armada OS.
-Tested working on the Portal (Snapdragon 8 Gen 2 / Adreno 740 via Turnip), including x86
-games running through Proton/FEX (e.g. Valheim).
+Native aarch64 build of [lsfg-vk](https://github.com/PancakeTAS/lsfg-vk), the Lossless
+Scaling frame generation Vulkan layer, packaged for Armada OS on the AYN Odin 2 family.
 
-Built from PancakeTAS/lsfg-vk commit `PUT_COMMIT_HASH_HERE` (run `git rev-parse --short HEAD`
-in your build checkout and paste it here).
+This package was tested on an AYN Odin 2 Portal running Armada OS with Snapdragon 8 Gen 2 /
+Adreno 740 via Turnip, including x86 games running through Proton/FEX such as Valheim.
+
+## What is included
+
+- `files/liblsfg-vk-layer.so` - aarch64 Vulkan layer binary
+- `files/VkLayer_LSFGVK_frame_generation.json` - Vulkan implicit layer manifest
+- `install.sh` - user-local installer for Armada OS
+- `LICENSE.md` - GPL-3.0 license text from upstream lsfg-vk
+
+This repository does not include `Lossless.dll`, Lossless Scaling shaders, or any files from
+the commercial Lossless Scaling Steam app.
 
 ## Requirements
 
-- AYN Odin 2 / Odin 2 Portal on Armada OS (default `armada` user assumed; other usernames
-  are handled automatically by the installer)
-- **Lossless Scaling purchased on Steam** and installed on the device. It will not launch —
-  that's expected — but installing it puts `Lossless.dll` on disk, which this layer needs.
-  **The DLL and its shaders are the property of THS / Lossless Scaling and are NOT included
-  in this package under any circumstances.**
+- AYN Odin 2 or Odin 2 Portal running Armada OS
+- Steam installed and configured on the device
+- Lossless Scaling purchased on Steam and installed on the same device
+
+Lossless Scaling is expected not to launch on Armada OS. Installing it is still required
+because lsfg-vk reads the user's own `Lossless.dll` from the Steam install.
 
 ## Install
 
-1. Extract this archive somewhere in your home directory.
-2. Open a terminal in desktop mode (or SSH in) and run:
+Extract or clone this repository somewhere in your home directory, then run:
 
-   ```
-   cd <extracted folder>
-   chmod +x install.sh
-   ./install.sh
-   ```
-
-Everything installs to your home directory (`~/.local` and `~/.config/lsfg-vk`) — no root,
-no changes to the read-only OS, survives system updates.
-
-## Enable per game
-
-In Steam, open the game's Properties → Launch Options and put the variables **before** any
-existing command (only one `%command%` per line):
-
+```sh
+cd lsfg-vk-portal
+chmod +x install.sh
+./install.sh
 ```
+
+The installer writes only to user-level locations:
+
+```text
+~/.local/lib/liblsfg-vk-layer.so
+~/.local/share/vulkan/implicit_layer.d/VkLayer_LSFGVK_frame_generation.json
+~/.config/lsfg-vk/conf.toml
+```
+
+No root access is required, and the install does not modify the read-only OS image.
+
+## Enable Per Game
+
+In Steam, open the game's Properties, then put the variables before the game command in
+Launch Options:
+
+```sh
 LSFGVK_MULTIPLIER=2 LSFGVK_FLOW_SCALE=0.5 LSFGVK_PERFORMANCE_MODE=1 /usr/libexec/armada/armada-game-launch %command%
 ```
 
-Available variables: `LSFGVK_MULTIPLIER` (2–4), `LSFGVK_FLOW_SCALE` (0.25–1.0, higher =
-less ghosting, more GPU load), `LSFGVK_PERFORMANCE_MODE` (1/0), `LSFGVK_PACING`.
+Common options:
 
-Alternatively, add permanent per-game profiles in `~/.config/lsfg-vk/conf.toml` — see the
-commented example the installer writes there. Profiles match on the game's process name
-(`Something.exe` for Proton games; check with `ps aux | grep -i exe` while the game runs).
+| Variable | Typical values | Notes |
+| --- | --- | --- |
+| `LSFGVK_MULTIPLIER` | `2`, `3`, `4` | Frame generation multiplier. Start with `2`. |
+| `LSFGVK_FLOW_SCALE` | `0.25` to `1.0` | Higher can reduce ghosting but costs more GPU time. |
+| `LSFGVK_PERFORMANCE_MODE` | `1` or `0` | Start with `1`; try `0` for better quality in lighter games. |
+| `LSFGVK_PACING` | upstream default or custom | Frame pacing option exposed by lsfg-vk. |
 
-## Tips
+You can also create per-game profiles in `~/.config/lsfg-vk/conf.toml`. Profiles match the
+game process name, such as `Game.exe` for Proton games. If needed, check the process name
+while the game is running:
 
-- Start at 2×, flow scale 0.5, performance mode on. Raise flow scale to 0.75–1.0 to reduce
-  ghosting if the GPU has headroom; try performance mode off for better quality in light games.
-- Capping the game to a steady base framerate (30/40) usually looks better after 2× than an
-  uncapped, fluctuating framerate.
-- If the layer doesn't appear in `vulkaninfo --summary | grep -i lsfg`, check the
-  `library_path` in `~/.local/share/vulkan/implicit_layer.d/VkLayer_LSFGVK_frame_generation.json`
-  and please report your Armada OS version when filing an issue.
+```sh
+ps aux | grep -i exe
+```
+
+## Recommended Starting Point
+
+- Cap the game to a steady 30 or 40 FPS first.
+- Start with `LSFGVK_MULTIPLIER=2`, `LSFGVK_FLOW_SCALE=0.5`, and
+  `LSFGVK_PERFORMANCE_MODE=1`.
+- Raise `LSFGVK_FLOW_SCALE` to `0.75` or `1.0` only if there is enough GPU headroom.
+- Try performance mode off for lighter games if image quality matters more than GPU load.
+
+## Verify
+
+If `vulkaninfo` is installed, the installer attempts to verify the layer automatically. You
+can also check manually:
+
+```sh
+vulkaninfo --summary | grep -i lsfg
+```
+
+If the layer is not listed, inspect:
+
+```text
+~/.local/share/vulkan/implicit_layer.d/VkLayer_LSFGVK_frame_generation.json
+```
+
+The manifest's `library_path` should point to the current user's
+`~/.local/lib/liblsfg-vk-layer.so`.
+
+## Checksums
+
+```text
+dc08b91937c998f30115f1fac48ffe40d5142ce8e80e4b68feb3fef6b675e804  files/liblsfg-vk-layer.so
+c1f1a4c3848dea3ed68c3033a27c66ac54f9c25a9b650f086e5a91b552901949  files/VkLayer_LSFGVK_frame_generation.json
+5bab0e2ae8c5257d1e4d943d108c7477e79e8ceaaa47b65da32c487cef2af1f8  install.sh
+```
 
 ## Uninstall
 
-Delete:
+Delete these paths:
 
+```sh
+rm -f ~/.local/lib/liblsfg-vk-layer.so
+rm -f ~/.local/share/vulkan/implicit_layer.d/VkLayer_LSFGVK_frame_generation.json
+rm -rf ~/.config/lsfg-vk
 ```
-~/.local/lib/liblsfg-vk-layer.so
-~/.local/share/vulkan/implicit_layer.d/VkLayer_LSFGVK_frame_generation.json
-~/.config/lsfg-vk/
-```
 
-and remove the launch options from your games.
+Then remove the `LSFGVK_*` launch options from your games.
 
-## Credits & license
+## Source And License
 
-- [PancakeTAS and the lsfg-vk contributors](https://github.com/PancakeTAS/lsfg-vk) — the
-  entire frame-generation layer this package is a straight aarch64 compile of. GPL-3.0
-  license (included as LICENSE.md in this repository); full source is available at the
-  upstream repository at the commit noted above.
-- THS / Lossless Scaling — authors of the frame-generation shaders, which are extracted
-  on-device from each user's own purchased `Lossless.dll` and never redistributed.
-- This package adds no code — it is a build + install script for the Odin 2 Portal.
+lsfg-vk is GPL-3.0 software by PancakeTAS and contributors. This repository is a binary
+package plus installer for Armada OS; it does not add or modify lsfg-vk source code.
+
+The exact upstream source commit used for this binary was not recorded in the initial build
+artifact. See [SOURCE.md](SOURCE.md) for source-provenance notes and the recommended rebuild
+metadata to include in future releases.
+
+Lossless Scaling is by THS. Users must provide their own Steam-purchased copy. This package
+does not redistribute Lossless Scaling binaries or shaders.
