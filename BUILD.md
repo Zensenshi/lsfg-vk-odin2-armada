@@ -3,8 +3,9 @@
 Armada OS is Fedora-based but immutable, so build lsfg-vk inside a Fedora Distrobox rather
 than installing build dependencies directly into the base OS.
 
-These notes are intended for future releases where the exact upstream lsfg-vk commit should
-be recorded before publishing the binary.
+The current packaged binary was built from upstream commit
+`8b0da2661c6f3473a7fccc8ba643880050e71642` on the `develop` branch, described by Git as
+`v2.0.0-dev`.
 
 ## Create Or Enter A Fedora Distrobox
 
@@ -47,7 +48,8 @@ record it in the release notes.
 ```sh
 git clone https://github.com/PancakeTAS/lsfg-vk.git
 cd lsfg-vk
-git switch release
+git switch develop
+git checkout 8b0da2661c6f3473a7fccc8ba643880050e71642
 git submodule update --init --recursive
 
 git rev-parse HEAD
@@ -55,7 +57,9 @@ clang --version
 cat /etc/fedora-release
 ```
 
-Copy the commit hash and environment details into `SOURCE.md` before publishing.
+Copy the commit hash and environment details into `SOURCE.md` before publishing. If you
+intentionally build a newer upstream revision, update `SOURCE.md`, `README.md`, and release
+notes with the new commit.
 
 Configure and build:
 

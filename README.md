@@ -122,10 +122,10 @@ Then remove the `LSFGVK_*` launch options from your games.
 lsfg-vk is GPL-3.0 software by PancakeTAS and contributors. This repository is a binary
 package plus installer for Armada OS; it does not add or modify lsfg-vk source code.
 
-The exact upstream source commit used for this binary was not recorded in the initial build
-artifact. See [SOURCE.md](SOURCE.md) for source-provenance notes and the recommended rebuild
-metadata to include in future releases. See [BUILD.md](BUILD.md) for the recommended
-Fedora Distrobox rebuild workflow on immutable Armada OS.
+This binary was built from upstream commit
+`8b0da2661c6f3473a7fccc8ba643880050e71642` (`v2.0.0-dev`). See
+[SOURCE.md](SOURCE.md) for source-provenance notes and [BUILD.md](BUILD.md) for the
+recommended Fedora Distrobox rebuild workflow on immutable Armada OS.
 
 Lossless Scaling is by THS. Users must provide their own Steam-purchased copy. This package
 does not redistribute Lossless Scaling binaries or shaders.

@@ -8,15 +8,19 @@ family.
 
 - Binary: `files/liblsfg-vk-layer.so`
 - Architecture: ELF 64-bit ARM aarch64 shared object
+- Upstream repository: `https://github.com/PancakeTAS/lsfg-vk.git`
+- Upstream branch: `develop`
+- Upstream revision: `8b0da2661c6f3473a7fccc8ba643880050e71642`
+- Upstream tag/description: `v2.0.0-dev`
+- Local source tree status at verification: clean
 - Build ID: `33b68bc66d36dc235eae7e3abb353ad1c0a0a439`
 - Build environment: Fedora userspace in Distrobox on immutable Armada OS
 - Observed compiler string: `clang version 22.1.8 (Fedora 22.1.8-1.fc44)`
 - SHA-256:
   `dc08b91937c998f30115f1fac48ffe40d5142ce8e80e4b68feb3fef6b675e804`
 
-The exact upstream lsfg-vk commit for this initial binary was not preserved in the build
-artifact. That should be corrected for future releases by rebuilding from a checked-out
-upstream commit and recording the commit hash here and in the release notes.
+The packaged binary was verified byte-for-byte identical to the build artifact at
+`lsfg-vk/build/lsfg-vk-layer/liblsfg-vk-layer.so` in the local upstream checkout.
 
 ## Recommended Future Release Metadata
 
