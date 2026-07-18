@@ -9,6 +9,7 @@ family.
 - Binary: `files/liblsfg-vk-layer.so`
 - Architecture: ELF 64-bit ARM aarch64 shared object
 - Build ID: `33b68bc66d36dc235eae7e3abb353ad1c0a0a439`
+- Build environment: Fedora userspace in Distrobox on immutable Armada OS
 - Observed compiler string: `clang version 22.1.8 (Fedora 22.1.8-1.fc44)`
 - SHA-256:
   `dc08b91937c998f30115f1fac48ffe40d5142ce8e80e4b68feb3fef6b675e804`
@@ -24,7 +25,9 @@ For a future public release, record:
 - upstream lsfg-vk repository URL
 - upstream lsfg-vk commit hash
 - any local patches, or an explicit statement that there were none
-- compiler and distro/container version used for the build
+- Armada OS version
+- Distrobox image and Fedora version used for the build
+- compiler version
 - build commands
 - SHA-256 checksums for each release file
 
